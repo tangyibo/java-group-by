@@ -9,7 +9,7 @@
 
 ### 2、问题描述
 
-程序从CSV 格式的文件中读取数据(例如foo.CSV)，每行包含英文逗号分隔的两个整数，其中含有两千万行模拟数据，可以看做个 foo(a int, b int) 的数据库关系表，样例如下: 
+程序从CSV 格式的文件中读取数据(例如foo.CSV)，每行包含英文逗号分隔的两个整数，其中含有千万行模拟数据，可以看做个 foo(a int, b int) 的数据库关系表，样例如下: 
 
 ```
 a,b
@@ -80,6 +80,8 @@ CALL PROC_INIT_DATA_t_foo();
 ```
 -- 查询模拟的数据总量
 SELECT count(*) from `t_foo`;
+
+-- 查询计算结果
 SELECT avg(a) as `avg_a`,b FROM `t_foo` GROUP BY b;
 ```
 
@@ -352,7 +354,7 @@ URL resource = ExampleTests.class.getClassLoader().getResource("t_foo.CSV");
 List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 ```
 
-说明：CSV文本文件在内存中的存储格式为: 一行记录存在在HashMap<String,String>中，多行记录存在在ArrayList<Map>中。
+说明：CSV文本文件在内存中的存储格式为: 单行记录用HashMap<String,String>存储，多行记录用户ArrayList<Map>存储。
 
 - (2) 字段排序
 
@@ -495,7 +497,7 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 
 - 编译测试
 
-** (1) 本文算法测试 **
+**(1)本文算法测试**
 
 ```
 # cd java-group-by/java-group-by-tang/
@@ -503,7 +505,7 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 # mvn test
 ```
 
-** (2) calcite算法测试 **
+**(2)calcite算法测试**
 
 ```
 # cd java-group-by/java-group-by-calcite/
@@ -511,7 +513,7 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 # mvn test
 ```
 
-** (3) mysql算法测试 **
+**(3)mysql算法测试**
 
 请参照第二章节的方式。
 
@@ -524,12 +526,12 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 
 Apache Calcite 是一款开源SQL解析工具, 可以将各种SQL语句解析成抽象语法术AST(Abstract Syntax Tree), 之后通过操作AST就可以把SQL中所要表达的算法与关系体现在具体代码之中。
 
-Calcite提供了多种方式添加数据源,其中包括csv文本文件作为输入数据源，并提供jdbc方式的执行SQL计算的功能。示例代码：
+Calcite提供了多种方式添加数据源,其中包括csv文本文件作为输入数据源，并提供jdbc方式执行SQL进行计算的功能。示例代码：
 
 ```
 		Properties config = new Properties();
-        config.put("model", CalciteTest.class.getClassLoader().getResource("config.json").getPath());
-        config.put("caseSensitive", "false");
+		config.put("model", CalciteTest.class.getClassLoader().getResource("config.json").getPath());
+		config.put("caseSensitive", "false");
 		
 		Connection connection = DriverManager.getConnection("jdbc:calcite:", config);
 		CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
@@ -597,8 +599,10 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 - (2) 速度问题分析： 从执行速度上来看，calcite > MySQL > myself
 
-目前尚未细读过calcite与mysql的group by的实现代码，算法复杂度分析暂时无法给出。
+目前尚未细读过calcite与mysql的group by的实现代码，算法复杂度的比较分析暂时无法给出。
 
 ## 五、总结
 
 经过此次探究，较为深入的了解了group by底层的大致原理，并基本算是实现了一个简单版的avg(),min(),max(),sum(),count()等聚合函数的group by功能实现。但目前支持含有一个整形字段的group by，对于多字段和其他数据类型的支持含有很大差距。
+
+从测试结果来看，目前最大只能支持到五百万，而支持千万级的数据量目标尚未实现，后续还需要继续努力!!!
