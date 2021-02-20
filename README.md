@@ -350,7 +350,7 @@ mysql> SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b;
 利用javacsv库将csv文本文件内容加载到内存中：
 
 ```
-URL resource = ExampleTests.class.getClassLoader().getResource("t_foo.CSV");
+URL resource = ExampleTest.class.getClassLoader().getResource("t_foo.CSV");
 List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 ```
 
@@ -493,13 +493,23 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 
   **JDK**:>=1.8
  
-  **maven**:>=3.1
+  **maven**:>=3.1 (建议配置阿里云仓库)
 
-- 编译测试
+- 全部编译测试
+
+```
+# git clone https://github.com/tangyibo/java-group-by.git
+# cd java-group-by/
+# mvn clean
+# mvn test
+```
+
+- 分模块编译测试
 
 **(1)本文算法测试**
 
 ```
+# git clone https://github.com/tangyibo/java-group-by.git
 # cd java-group-by/java-group-by-tang/
 # mvn clean
 # mvn test
@@ -508,6 +518,7 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 **(2)calcite算法测试**
 
 ```
+# git clone https://github.com/tangyibo/java-group-by.git
 # cd java-group-by/java-group-by-calcite/
 # mvn clean
 # mvn test
@@ -575,11 +586,11 @@ MySQL的csv存储引擎支持csv格式的文本方式存储数据，并可通过
 
 注：
 
-- (1) 测试环境：自己的工作机器，Mem: 8G , CPU : 4核(Intel i3)
+- (1) 测试环境：自己的工作机器，Mem: 8G , CPU : 4核(Intel i3)；
 
-- (2) 性能时间单位为秒
+- (2) 性能时间单位为秒；
 
-- (3) OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded
+- (3) OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段；
 
 ### 3、性能问题分析
 
@@ -600,6 +611,18 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 - (2) 速度问题分析： 从执行速度上来看，calcite > MySQL > myself
 
 目前尚未细读过calcite与mysql的group by的实现代码，算法复杂度的比较分析暂时无法给出。
+
+- (3) 改进优化点尝试
+
+> 改进csv文本加载到内存后存储的数据结构；
+
+> 支持group by多个字段的情况；
+
+> 扩大支持的数据类型的范围；
+
+- (4) 引入新的思路
+
+> 研究calcite中group by的实现方法；
 
 ## 五、总结
 

@@ -64,7 +64,7 @@ public class PerformanceTest {
 		System.out.println("Test Execute Big Data 500w Avg() Group by Time Elapsed: " + watch.getTime());
 	}
 	
-	@Test
+	//@Test
 	public void testGroupByServiceWithFooAvg600w() throws NumberFormatException, IOException {
 		StopWatch watch = new StopWatch();
 		
