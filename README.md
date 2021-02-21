@@ -534,34 +534,11 @@ DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 Apache Calcite 是一款开源SQL解析工具, 可以将各种SQL语句解析成抽象语法术AST(Abstract Syntax Tree), 之后通过操作AST就可以把SQL中所要表达的算法与关系体现在具体代码之中。
 
-Calcite提供了多种方式添加数据源,其中包括csv文本文件作为输入数据源，并提供jdbc方式执行SQL进行计算的功能。示例代码：
+Calcite提供了多种方式添加数据源,其中包括csv文本文件作为输入数据源，并提供jdbc方式执行SQL进行计算的功能。
 
-```
-		Properties config = new Properties();
-		config.put("model", CalciteTest.class.getClassLoader().getResource("config.json").getPath());
-		config.put("caseSensitive", "false");
-		
-		Connection connection = DriverManager.getConnection("jdbc:calcite:", config);
-		CalciteConnection calciteConnection = connection.unwrap(CalciteConnection.class);
+- 基于csvjdbc的计算
 
-		String sql = "select avg(a) as \"avg_a\",b from csv.test group by b";
-		Statement statement = calciteConnection.createStatement();
-		ResultSet rs = statement.executeQuery(sql);
-		ResultSetMetaData rsmd=rs.getMetaData();
-		
-		while(rs.next()) {
-			Map<String,Object> row=new HashMap<>();
-			for(int i=1;i<=rsmd.getColumnCount();++i) {
-				row.put(rsmd.getColumnName(i), rs.getObject(i));
-			}
-			
-			System.out.println(row);
-		}
-		
-		rs.close();
-		statement.close();
-		connection.close();
-```
+CsvJdbc 是csv文件的一个JDBC驱动，它提供了Java访问csv文件的的JDBC驱动，它把一个csv文件当做一个数据库表来操作，提供简单的查询。
 
 - 基于MySQl的csv引擎的计算
 
@@ -569,19 +546,19 @@ MySQL的csv存储引擎支持csv格式的文本方式存储数据，并可通过
 
 #### 2、性能测试对比
 
-本文的算法(下文简称myself)与calcite和mysql进行了性能对比测试，分别以100w、500w、800w、1000w、2000w的数据量进行对比测试，结果如下：
+本文的算法(下文简称myself)与calcite、csvjdbc和mysql进行了性能对比测试，分别以100w、500w、800w、1000w、2000w的数据量进行对比测试，结果如下：
 
 #### （1）工作机测试
 
-| 数据量 | myself |  calcite  |  MySQL  |
-| :--- |  :---: |  :---: |  :---: |
-| 100w | 0.515 |  0.323  |  1.155  |
-| 500w | 3.375 |  1.209  |  4.428  |
-| 600w | 5.262 |  1.299   |  4.618  |
-| 700w | 7.427 |  1.487   |  5.692  |
-| 800w | 7.188  |  1.679  |  6.014  |
-| 1000w | 23.390 |  2.726  |  7.042  |
-| 2000w | OOM |  4.510  |  13.639  |
+| 数据量 | myself |  calcite  |  MySQL  | csvjdbc | 
+| :--- |  :---: |  :---: |  :---: | :---: |
+| 100w | 0.515 |  0.323  |  1.155  | 2.389 |
+| 500w | 3.375 |  1.209  |  4.428  | 11.348 |
+| 600w | 5.262 |  1.299   |  4.618  | 15.833 |
+| 700w | 7.427 |  1.487   |  5.692  | 14.860 | 
+| 800w | 7.188  |  1.679  |  6.014  | 11.394 |
+| 1000w | 23.390 |  2.726  |  7.042  | OOM | 
+| 2000w | OOM |  4.510  |  13.639  | OOM |
 
 注：
 
@@ -591,7 +568,7 @@ MySQL的csv存储引擎支持csv格式的文本方式存储数据，并可通过
 
 - (3) 性能时间单位为秒；
 
-- (4) OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段，堆栈信息如下：
+- (4) mysqlf的OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段，堆栈信息如下：
 
 ```
 java.lang.OutOfMemoryError: GC overhead limit exceeded
@@ -603,17 +580,30 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 	at com.github.tang.groupby.PerformanceTest.testGroupByServiceWithFooAvg2000w(PerformanceTest.java:139)
 ```
 
+- (5) csvjdbc的OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段，堆栈信息如下：
+
+```
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+	at org.relique.jdbc.csv.CsvRawReader.next(CsvRawReader.java:169)
+	at org.relique.jdbc.csv.CsvReader.next(CsvReader.java:101)
+	at org.relique.jdbc.csv.CsvResultSet.next(CsvResultSet.java:923)
+	at org.relique.jdbc.csv.CsvResultSet.<init>(CsvResultSet.java:563)
+	at org.relique.jdbc.csv.CsvStatement.executeParsedQuery(CsvStatement.java:511)
+	at org.relique.jdbc.csv.CsvStatement.executeParsedQuery(CsvStatement.java:313)
+	at org.relique.jdbc.csv.CsvStatement.executeQuery(CsvStatement.java:306)
+```
+
 #### （2）服务器测试
 
-| 数据量 | myself |  calcite  |  MySQL  |
-| :--- |  :---: |  :---: |  :---: |
-| 100w | 0.933 |  0.411  |  1.155  |
-| 500w | 6.929 |  1.802  |  4.428  |
-| 600w | 7.295 |  2.131   |  4.618  |
-| 700w | 7.458 |  2.487   |  5.692  |
-| 800w | 7.852  |  2.819  |  6.014  |
-| 1000w | 23.657 |  3.755  |  7.042  |
-| 2000w | 43.677 |  6.745  |  13.639  |
+| 数据量 | myself |  calcite  |  MySQL  | csvjdbc | 
+| :--- |  :---: |  :---: |  :---: | :---: | 
+| 100w | 0.933 |  0.411  |  1.155  | csvjdbc | 
+| 500w | 6.929 |  1.802  |  4.428  | csvjdbc | 
+| 600w | 7.295 |  2.131   |  4.618  | csvjdbc | 
+| 700w | 7.458 |  2.487   |  5.692  | csvjdbc | 
+| 800w | 7.852  |  2.819  |  6.014  | csvjdbc | 
+| 1000w | 23.657 |  3.755  |  7.042  | csvjdbc | 
+| 2000w | 43.677 |  6.745  |  13.639  | csvjdbc | 
 
 注：
 
@@ -623,7 +613,7 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 - (3) 性能时间单位为秒；
 
-- (4) 未发生OOM；
+- (4) 均未发生OOM；
 
 ### 3、性能问题分析
 

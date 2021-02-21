@@ -18,7 +18,7 @@ public class CalciteTest {
 
 	@Before
     public void init(){
-		System.out.println("======================================================================");
+		System.out.println("===========================Calcite=========================================");
     }
 	
 	@Test

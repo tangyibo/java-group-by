@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.tang.groupby</groupId>
+		<artifactId>java-group-by</artifactId>
+		<version>0.0.1</version>
+	</parent>
+	<artifactId>java-group-by-csvjdbc</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.sourceforge.csvjdbc</groupId>
+			<artifactId>csvjdbc</artifactId>
+			<version>1.0.36</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+	</dependencies>
+
+</project>
