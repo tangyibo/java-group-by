@@ -576,7 +576,7 @@ MySQL的csv存储引擎支持csv格式的文本方式存储数据，并可通过
 
 - (3) 性能时间单位为秒；
 
-- (4) mysqlf的OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段，堆栈信息如下：
+- (4) myself的OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段，堆栈信息如下：
 
 ```
 java.lang.OutOfMemoryError: GC overhead limit exceeded
