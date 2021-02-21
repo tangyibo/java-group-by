@@ -153,7 +153,7 @@ public class CsvJdbcTest {
 		}
 
 		watch.stop();
-		System.out.println("Test Execute Big Data 500w Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Big Data 600w Group by Time Elapsed: " + watch.getTime());
 	}
 
 	@Test
@@ -187,7 +187,7 @@ public class CsvJdbcTest {
 		}
 
 		watch.stop();
-		System.out.println("Test Execute Big Data 500w Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Big Data 700w Group by Time Elapsed: " + watch.getTime());
 	}
 
 	@Test

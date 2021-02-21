@@ -605,13 +605,13 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 | 数据量 | myself |  calcite  |  MySQL  | csvjdbc | 
 | :--- |  :---: |  :---: |  :---: | :---: | 
-| 100w | 0.933 |  0.411  |  1.155  | csvjdbc | 
-| 500w | 6.929 |  1.802  |  4.428  | csvjdbc | 
-| 600w | 7.295 |  2.131   |  4.618  | csvjdbc | 
-| 700w | 7.458 |  2.487   |  5.692  | csvjdbc | 
-| 800w | 7.852  |  2.819  |  6.014  | csvjdbc | 
-| 1000w | 23.657 |  3.755  |  7.042  | csvjdbc | 
-| 2000w | 43.677 |  6.745  |  13.639  | csvjdbc | 
+| 100w | 0.933 |  0.411  |  1.155  | 2.239 | 
+| 500w | 6.929 |  1.802  |  4.428  | 15.331 | 
+| 600w | 7.295 |  2.131   |  4.618  | 14.505 | 
+| 700w | 7.458 |  2.487   |  5.692  | 16.086 | 
+| 800w | 7.852  |  2.819  |  6.014  | 11.612 | 
+| 1000w | 23.657 |  3.755  |  7.042  | 25.794 | 
+| 2000w | 43.677 |  6.745  |  13.639  | 90.843 | 
 
 注：
 
@@ -625,11 +625,11 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 ### 3、性能问题分析
 
-- (1) OOM问题分析：myself的数据在加载至内存的过程中就发生了OOM
+- (1) OOM问题分析：myself/csvjdbc的数据在加载至内存的过程中就发生了OOM
 
-- (2) 速度问题分析：从执行速度上来看，calcite > MySQL > myself
+- (2) 速度问题分析：从执行速度上来看，calcite > MySQL > myself > csvjdbc
 
-目前尚未细读过calcite与mysql的group by的实现代码，算法复杂度的比较分析暂时无法给出。
+目前尚未细读过calcite/csvjdbc与mysql的group by的实现代码，算法复杂度的对比分析暂时无法给出。
 
 - (3) 改进优化点尝试
 
@@ -637,9 +637,11 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 > 扩大支持的数据类型的范围；
 
+> 甚至:支持写SQL的方式;
+
 - (4) 引入新的思路
 
-> 研究calcite中group by的实现方法；
+> 研究calcite/csvjdbc中group by的实现方法；
 
 ## 五、总结
 
