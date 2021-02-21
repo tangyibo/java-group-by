@@ -492,15 +492,14 @@ DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 - 全部编译测试
 
-linux下：
-
 ```
 # git clone https://github.com/tangyibo/java-group-by.git
 # cd java-group-by/
-# sh run.sh
 ```
 
-windows下：双击run.cmd运行
+**linux下：**  ```sh run.sh```
+
+**windows下：** 双击run.cmd运行
 
 - 分模块编译测试
 
@@ -622,4 +621,4 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 经过此次探究，较为深入的了解了group by底层的大致原理，并基本算是实现了一个简单版的avg(),min(),max(),sum(),count()等聚合函数的group by功能实现。但目前支持含有一个字段的group by，对于多字段和其他数据类型的支持含有很大差距。
 
-从测试结果来看，目前**最大只能支持到1千万三百万左右的数据量**，而支持两千万级的数据量目标尚未实现，后续还需要继续努力!!!
+从测试结果来看，目前**最大只能支持到千万级左右的数据量**，而支持更大数据量全靠数据加载进内存处理显然还存在问题，后续还需要继续努力!!!
