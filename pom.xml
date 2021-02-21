@@ -18,6 +18,7 @@
 	<modules>
 		<module>java-group-by-tang</module>
 		<module>java-group-by-calcite</module>
+		<module>java-group-by-csvjdbc</module>
 	</modules>
 
 </project>
