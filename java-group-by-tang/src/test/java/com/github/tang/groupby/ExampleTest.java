@@ -9,12 +9,12 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.junit.Test;
-import com.github.tang.groupby.aggregation.DoubleAvgIntegerAggregation;
-import com.github.tang.groupby.aggregation.IntegerCountIntegerAggregation;
-import com.github.tang.groupby.aggregation.IntegerMaxIntegerAggregation;
-import com.github.tang.groupby.aggregation.IntegerMinIntegerAggregation;
-import com.github.tang.groupby.aggregation.IntegerNoAggregation;
-import com.github.tang.groupby.aggregation.IntegerSumIntegerAggregation;
+import com.github.tang.groupby.aggregation.AvgAggregation;
+import com.github.tang.groupby.aggregation.CountAggregation;
+import com.github.tang.groupby.aggregation.MaxAggregation;
+import com.github.tang.groupby.aggregation.MinAggregation;
+import com.github.tang.groupby.aggregation.NoAggregation;
+import com.github.tang.groupby.aggregation.SumAggregation;
 import com.github.tang.groupby.converter.StringToIntegerConverter;
 import com.github.tang.groupby.core.DefaultGroupByService;
 import com.github.tang.groupby.util.CsvFileUtils;
@@ -44,7 +44,7 @@ public class ExampleTest {
 		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `test` GROUP BY b; */
-		List<Map<String, String>> r = service.groupBy(new DoubleAvgIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
+		List<Map<String, String>> r = service.groupBy(new AvgAggregation<Integer>("a",new StringToIntegerConverter()), new NoAggregation<Integer>("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
@@ -62,7 +62,7 @@ public class ExampleTest {
 		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT min(a) as `avg_a`,b FROM `test` GROUP BY b; */
-		List<Map<String, String>> r = service.groupBy(new IntegerMinIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
+		List<Map<String, String>> r = service.groupBy(new MinAggregation<Integer>("a",new StringToIntegerConverter()), new NoAggregation<Integer>("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
@@ -80,7 +80,7 @@ public class ExampleTest {
 		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT max(a) as `avg_a`,b FROM `test` GROUP BY b; */
-		List<Map<String, String>> r = service.groupBy(new IntegerMaxIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
+		List<Map<String, String>> r = service.groupBy(new MaxAggregation<Integer>("a",new StringToIntegerConverter()), new NoAggregation<Integer>("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
@@ -98,7 +98,7 @@ public class ExampleTest {
 		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT sum(a) as `avg_a`,b FROM `test` GROUP BY b; */
-		List<Map<String, String>> r = service.groupBy(new IntegerSumIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
+		List<Map<String, String>> r = service.groupBy(new SumAggregation<Integer>("a",new StringToIntegerConverter()), new NoAggregation<Integer>("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
@@ -116,7 +116,7 @@ public class ExampleTest {
 		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT count(a) as `avg_a`,b FROM `test` GROUP BY b; */
-		List<Map<String, String>> r = service.groupBy(new IntegerCountIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
+		List<Map<String, String>> r = service.groupBy(new CountAggregation<Integer>("a",new StringToIntegerConverter()), new NoAggregation<Integer>("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();

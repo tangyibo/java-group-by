@@ -10,14 +10,14 @@ import com.github.tang.groupby.StringToNumberConverter;
  * @author tang
  *
  */
-public class IntegerNoAggregation extends AbstractAggregation<Integer, Integer> {
+public class NoAggregation<T extends Number> extends AbstractAggregation<T, T> {
 
-	public IntegerNoAggregation(String field, StringToNumberConverter<Integer> converter) {
+	public NoAggregation(String field, StringToNumberConverter<T> converter) {
 		super(field, converter);
 	}
 
 	@Override
-	public Integer aggregation(Map<String, Integer> header, List<String[]> data) {
+	public T aggregation(Map<String, Integer> header, List<String[]> data) {
 		return converter.convert(data.get(0)[header.get(fieldName)]);
 	}
 

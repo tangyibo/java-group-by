@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.time.StopWatch;
+
 import com.github.tang.groupby.Aggregation;
 import com.github.tang.groupby.DataRecordSet;
 import com.github.tang.groupby.GroupByService;
@@ -36,13 +39,25 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 		queryFieldsMap = Arrays.asList(aggregations).stream()
 				.collect(Collectors.toMap(a -> a.getAggregationFieldName(), a -> a));
 
+		StopWatch watch = new StopWatch();
+
 		// 字段排序
+		watch.start();
 		this.orderUseGroupByFields(aggregations);
+		watch.stop();
+		System.out.println("Sort Data Record Set Time Elapsed(ms) : " + watch.getTime());
 
 		// System.out.println(dataRecordSet);
+		
+		watch.reset();
 
 		// 归并聚合
-		return this.aggregateData(aggregations);
+		watch.start();
+		List<Map<String, String>> result= this.aggregateData(aggregations);
+		watch.stop();
+		System.out.println("Calculate Data Result Set Time Elapsed(ms) : " + watch.getTime());
+		
+		return result;
 	}
 
 	/**

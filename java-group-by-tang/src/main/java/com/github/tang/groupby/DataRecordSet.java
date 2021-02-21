@@ -70,7 +70,7 @@ public class DataRecordSet {
 				
 				String field = entry.getKey();
 				Object value = row[entry.getValue()];
-				sb.append(String.format("%s = %s", field, value));
+				sb.append(String.format("%s=%s", field, value));
 
 				i++;
 			}

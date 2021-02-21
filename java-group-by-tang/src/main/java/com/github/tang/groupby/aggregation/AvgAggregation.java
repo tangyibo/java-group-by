@@ -10,18 +10,18 @@ import com.github.tang.groupby.StringToNumberConverter;
  * @author tang
  *
  */
-public class DoubleAvgIntegerAggregation extends AbstractAggregation<Double, Integer> {
+public class AvgAggregation<T extends Number> extends AbstractAggregation<Double, T> {
 
-	public DoubleAvgIntegerAggregation(String field, StringToNumberConverter<Integer> converter) {
+	public AvgAggregation(String field, StringToNumberConverter<T> converter) {
 		super(field, converter, "avg");
 	}
 
 	@Override
 	public Double aggregation(Map<String, Integer> header, List<String[]> data) {
-		Integer sum = 0;
+		Double sum = new Double(0);
 		for (String[] row : data) {
-			Integer value = converter.convert(row[header.get(fieldName)]);
-			sum += value.intValue();
+			T value = converter.convert(row[header.get(fieldName)]);
+			sum += value.doubleValue();
 		}
 
 		return sum.doubleValue() / data.size();

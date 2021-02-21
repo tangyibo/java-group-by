@@ -10,10 +10,10 @@ import com.github.tang.groupby.StringToNumberConverter;
  * @author tang
  *
  */
-public class IntegerCountIntegerAggregation extends AbstractAggregation<Integer, Integer> {
+public class CountAggregation<T extends Number> extends AbstractAggregation<Integer, T> {
 
-	public IntegerCountIntegerAggregation(String field, StringToNumberConverter<Integer> converter) {
-		super(field, converter,"count");
+	public CountAggregation(String field, StringToNumberConverter<T> converter) {
+		super(field, converter, "count");
 	}
 
 	@Override

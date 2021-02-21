@@ -10,21 +10,20 @@ import com.github.tang.groupby.StringToNumberConverter;
  * @author tang
  *
  */
-public class IntegerMinIntegerAggregation extends AbstractAggregation<Integer, Integer> {
+public class MinAggregation<T extends Number> extends AbstractAggregation<T, T> {
 
-	public IntegerMinIntegerAggregation(String field, StringToNumberConverter<Integer> converter) {
+	public MinAggregation(String field, StringToNumberConverter<T> converter) {
 		super(field, converter, "min");
 	}
 
 	@Override
-	public Integer aggregation(Map<String, Integer> header, List<String[]> data) {
-		Integer min = Integer.MAX_VALUE;
+	public T aggregation(Map<String, Integer> header, List<String[]> data) {
+		T min = converter.convert(data.get(0)[header.get(fieldName)]);
 		for (String[] row : data) {
-			Integer value = converter.convert(row[header.get(fieldName)]);
+			T value = converter.convert(row[header.get(fieldName)]);
 			if (value.intValue() < min.intValue()) {
 				min = value;
 			}
-			;
 		}
 
 		return min;
