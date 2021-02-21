@@ -525,6 +525,14 @@ DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 请参照第二章节的方式。
 
+**(4)csvjdbc算法测试**
+
+```
+# git clone https://github.com/tangyibo/java-group-by.git
+# cd java-group-by/java-group-by-csvjdbc/
+# mvn clean
+# mvn test
+```
 
 ## 四、性能测试与分析
 
