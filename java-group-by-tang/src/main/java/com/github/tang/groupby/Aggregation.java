@@ -33,10 +33,11 @@ public interface Aggregation<R extends Number, T extends Number> {
 	/**
 	 * 聚合函数
 	 * 
-	 * @param data 数据
+	 * @param header 表头部
+	 * @param data   表数据
 	 * @return 聚合计算的结果
 	 */
-	R aggregation(List<Map<String, String>> data);
+	R aggregation(Map<String, Integer> header, List<String[]> data);
 
 	/**
 	 * 聚合的字段名

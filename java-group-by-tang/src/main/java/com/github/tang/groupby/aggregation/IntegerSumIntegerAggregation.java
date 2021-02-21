@@ -18,8 +18,9 @@ public class IntegerSumIntegerAggregation extends AbstractAggregation<Integer, I
 	}
 
 	@Override
-	public Integer aggregation(List<Map<String, String>> data) {
-		return data.stream().mapToInt((item) -> converter.convert(item.get(fieldName))).sum();
+	public Integer aggregation(Map<String, Integer> header, List<String[]> data) {
+		Integer index=header.get(fieldName);
+		return data.stream().mapToInt((item) -> converter.convert(item[index])).sum();
 	}
 
 }

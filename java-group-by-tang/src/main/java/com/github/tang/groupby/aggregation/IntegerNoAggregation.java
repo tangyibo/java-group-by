@@ -17,8 +17,8 @@ public class IntegerNoAggregation extends AbstractAggregation<Integer, Integer> 
 	}
 
 	@Override
-	public Integer aggregation(List<Map<String, String>> data) {
-		return converter.convert(data.get(0).get(fieldName));
+	public Integer aggregation(Map<String, Integer> header, List<String[]> data) {
+		return converter.convert(data.get(0)[header.get(fieldName)]);
 	}
 
 }

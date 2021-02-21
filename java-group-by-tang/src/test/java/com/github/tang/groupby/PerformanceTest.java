@@ -34,8 +34,7 @@ public class PerformanceTest {
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("foo100.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b; */
@@ -52,8 +51,7 @@ public class PerformanceTest {
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("foo500.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b; */
@@ -64,14 +62,13 @@ public class PerformanceTest {
 		System.out.println("Test Execute Big Data 500w Avg() Group by Time Elapsed: " + watch.getTime());
 	}
 	
-	//@Test
+	@Test
 	public void testGroupByServiceWithFooAvg600w() throws NumberFormatException, IOException {
 		StopWatch watch = new StopWatch();
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("foo600.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b; */
@@ -82,14 +79,13 @@ public class PerformanceTest {
 		System.out.println("Test Execute Big Data 600w Avg() Group by Time Elapsed: " + watch.getTime());
 	}
 	
-	//@Test
+	@Test
 	public void testGroupByServiceWithFooAvg700w() throws NumberFormatException, IOException {
 		StopWatch watch = new StopWatch();
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("foo700.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b; */
@@ -100,14 +96,13 @@ public class PerformanceTest {
 		System.out.println("Test Execute Big Data 700w Avg() Group by Time Elapsed: " + watch.getTime());
 	}
 	
-	//@Test
+	@Test
 	public void testGroupByServiceWithFooAvg800w() throws NumberFormatException, IOException {
 		StopWatch watch = new StopWatch();
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("foo800.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b; */
@@ -118,14 +113,13 @@ public class PerformanceTest {
 		System.out.println("Test Execute Big Data 800w Avg() Group by Time Elapsed: " + watch.getTime());
 	}
 	
-	//@Test
+	@Test
 	public void testGroupByServiceWithFooAvg1000w() throws NumberFormatException, IOException {
 		StopWatch watch = new StopWatch();
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("foo1000.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b; */
@@ -136,14 +130,13 @@ public class PerformanceTest {
 		System.out.println("Test Execute Big Data 1000w Avg() Group by Time Elapsed: " + watch.getTime());
 	}
 	
-	//@Test
+	@Test
 	public void testGroupByServiceWithFooAvg2000w() throws NumberFormatException, IOException {
 		StopWatch watch = new StopWatch();
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("foo2000.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b; */

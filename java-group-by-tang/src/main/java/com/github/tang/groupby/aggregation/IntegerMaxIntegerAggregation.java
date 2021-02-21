@@ -17,10 +17,10 @@ public class IntegerMaxIntegerAggregation extends AbstractAggregation<Integer, I
 	}
 
 	@Override
-	public Integer aggregation(List<Map<String, String>> data) {
+	public Integer aggregation(Map<String, Integer> header, List<String[]> data) {
 		Integer max = Integer.MIN_VALUE;
-		for (Map<String, String> row : data) {
-			Integer value = converter.convert(row.get(fieldName));
+		for (String[] row : data) {
+			Integer value = converter.convert(row[header.get(fieldName)]);
 			if(value.intValue()>max.intValue()) {
 				max=value;
 			};

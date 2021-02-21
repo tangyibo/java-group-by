@@ -36,8 +36,7 @@ public class ExampleTest {
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `test` GROUP BY b; */
@@ -54,8 +53,7 @@ public class ExampleTest {
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT min(a) as `avg_a`,b FROM `test` GROUP BY b; */
@@ -72,8 +70,7 @@ public class ExampleTest {
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT max(a) as `avg_a`,b FROM `test` GROUP BY b; */
@@ -90,8 +87,7 @@ public class ExampleTest {
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT sum(a) as `avg_a`,b FROM `test` GROUP BY b; */
@@ -108,8 +104,7 @@ public class ExampleTest {
 		
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
-		String filePath = resource.getFile();
-		List<Map<String, String>> data=CsvFileUtils.readCsvFile(filePath);
+		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT count(a) as `avg_a`,b FROM `test` GROUP BY b; */

@@ -4,14 +4,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.tang.groupby.Aggregation;
+import com.github.tang.groupby.DataRecordSet;
 import com.github.tang.groupby.GroupByService;
 
 public abstract class AbstractGroupByService implements GroupByService {
 
-	protected List<Map<String, String>> data;
+	/* 存储csv文件中加载到内存的数据对象 */
+	protected DataRecordSet dataRecordSet;
 
-	public AbstractGroupByService(List<Map<String, String>> data) {
-		this.data = data;
+	public AbstractGroupByService(DataRecordSet dataRecordSet) {
+		this.dataRecordSet = dataRecordSet;
 	}
 
 	@Override

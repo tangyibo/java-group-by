@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.SerializationUtils;
 import com.github.tang.groupby.Aggregation;
+import com.github.tang.groupby.DataRecordSet;
 import com.github.tang.groupby.GroupByService;
 import com.github.tang.groupby.StringToNumberConverter;
 
@@ -20,27 +20,8 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 
 	private Map<String, Aggregation<?, ?>> queryFieldsMap;
 
-	public DefaultGroupByService(List<Map<String, String>> data) {
-		super(data);
-	}
-
-	private int myCompareTo(byte[] s1, byte[] s2) {
-		int len1 = s1.length;
-		int len2 = s2.length;
-		int lim = Math.min(len1, len2);
-		byte[] v1 = s1;
-		byte[] v2 = s2;
-
-		int k = 0;
-		while (k < lim) {
-			byte c1 = v1[k];
-			byte c2 = v2[k];
-			if (c1 != c2) {
-				return c1 - c2;
-			}
-			k++;
-		}
-		return len1 - len2;
+	public DefaultGroupByService(DataRecordSet dataRecordSet) {
+		super(dataRecordSet);
 	}
 
 	@Override
@@ -58,7 +39,7 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 		// 字段排序
 		this.orderUseGroupByFields(aggregations);
 
-		//data.stream().forEach((i) -> System.out.println(i));
+		// System.out.println(this.data);
 
 		// 归并聚合
 		return this.aggregateData(aggregations);
@@ -70,33 +51,29 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 	 * @param aggregations
 	 */
 	private void orderUseGroupByFields(Aggregation<?, ?>... aggregations) {
-		Collections.sort(this.data, new Comparator<Map<String, String>>() {
+		Collections.sort(dataRecordSet.getContent(), new Comparator<String[]>() {
 
 			@Override
-			public int compare(Map<String, String> left, Map<String, String> rigth) {
+			public int compare(String[] left, String[] rigth) {
 				for (Map.Entry<String, StringToNumberConverter<?>> entry : groupByFieldsMap.entrySet()) {
-					String lv = left.get(entry.getKey());
-					String rv = rigth.get(entry.getKey());
+					String field = entry.getKey();
 					StringToNumberConverter<?> converter = entry.getValue();
+					
+					int index = dataRecordSet.getFieldIndex(field);
+					
+					Number o1 = converter.convert(left[index]);
+					Number o2 = converter.convert(rigth[index]);
 
-					Number o1 = converter.convert(lv);
-					Number o2 = converter.convert(rv);
+					// Here o1 and o2 is all implement Comparable
+					@SuppressWarnings("rawtypes")
+					Comparable c1 = (Comparable) o1;
+					@SuppressWarnings("rawtypes")
+					Comparable c2 = (Comparable) o2;
 
-					if (o1 instanceof Comparable && o2 instanceof Comparable) {
-						@SuppressWarnings("rawtypes")
-						Comparable c1 = (Comparable) o1;
-						@SuppressWarnings("rawtypes")
-						Comparable c2 = (Comparable) o2;
-						@SuppressWarnings("unchecked")
-						int ret = c1.compareTo(c2);
-						if (0 != ret) {
-							return ret;
-						}
-					} else {
-						int ret = myCompareTo(SerializationUtils.serialize(o1), SerializationUtils.serialize(o1));
-						if (0 != ret) {
-							return ret;
-						}
+					@SuppressWarnings("unchecked")
+					int ret = c1.compareTo(c2);
+					if (0 != ret) {
+						return ret;
 					}
 				}
 
@@ -136,14 +113,14 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 		 * </p>
 		 */
 		int i;
-		for (i = 0; i < this.data.size(); ++i) {
-			Map<String, String> originRow = this.data.get(i);
+		for (i = 0; i < dataRecordSet.getContent().size(); ++i) {
+			String[] originRow = dataRecordSet.getContent().get(i);
 
 			if (result.isEmpty()) {
 				// 当首次结果集为空时，先将分组字段数据存储，整行记录不完整
 				Map<String, String> targetRow = new HashMap<>();
 				for (String gf : groupFields) {
-					targetRow.put(gf, originRow.get(gf));
+					targetRow.put(gf, originRow[dataRecordSet.getFieldIndex(gf)]);
 				}
 
 				result.add(targetRow);
@@ -161,14 +138,14 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 					// 调用聚合函数进行计算,聚合函数由用户从外部传入
 					for (String of : otherFields) {
 						Aggregation<?, ?> aggregation = queryFieldsMap.get(of);
-						List<Map<String, String>> subData = this.data.subList(first, last + 1);
-						Number v = aggregation.aggregation(Collections.unmodifiableList(subData));
+						List<String[]> subData = dataRecordSet.getSubContent(first, last + 1);
+						Number v = aggregation.aggregation(dataRecordSet.getHeader(), subData);
 						targetRow.put(aggregation.getAggregationFunctionName() + "_" + of, v.toString());
 					}
 
 					targetRow = new HashMap<>();
 					for (String f : groupFields) {
-						targetRow.put(f, originRow.get(f));
+						targetRow.put(f, originRow[dataRecordSet.getFieldIndex(f)]);
 					}
 
 					result.add(targetRow);
@@ -188,8 +165,8 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 		// 调用聚合函数进行计算
 		for (String of : otherFields) {
 			Aggregation<?, ?> aggregation = queryFieldsMap.get(of);
-			List<Map<String, String>> subData = this.data.subList(first, last + 1);
-			Number v = aggregation.aggregation(Collections.unmodifiableList(subData));
+			List<String[]> subData = dataRecordSet.getSubContent(first, last + 1);
+			Number v = aggregation.aggregation(dataRecordSet.getHeader(), subData);
 			targetRow.put(aggregation.getAggregationFunctionName() + "_" + of, v.toString());
 		}
 
@@ -203,7 +180,7 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 	 * @param result
 	 * @return
 	 */
-	private boolean canMergeToLast(Map<String, String> row, List<Map<String, String>> result, Set<String> groupFields) {
+	private boolean canMergeToLast(String[] row, List<Map<String, String>> result, Set<String> groupFields) {
 		if (result.isEmpty()) {
 			return false;
 		}
@@ -212,9 +189,13 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 
 		for (String f : groupFields) {
 			String oldValue = lastRow.get(f);
-			String newValue = row.get(f);
-			if (null == oldValue && newValue != null) {
-				return false;
+			String newValue = row[dataRecordSet.getFieldIndex(f)];
+			if (null == oldValue) {
+				if (newValue != null) {
+					return false;
+				} else {
+					return true;
+				}
 			}
 
 			if (!oldValue.equals(newValue)) {

@@ -17,10 +17,10 @@ public class DoubleAvgIntegerAggregation extends AbstractAggregation<Double, Int
 	}
 
 	@Override
-	public Double aggregation(List<Map<String, String>> data) {
+	public Double aggregation(Map<String, Integer> header, List<String[]> data) {
 		Integer sum = 0;
-		for (Map<String, String> row : data) {
-			Integer value = converter.convert(row.get(fieldName));
+		for (String[] row : data) {
+			Integer value = converter.convert(row[header.get(fieldName)]);
 			sum += value.intValue();
 		}
 

@@ -350,44 +350,40 @@ mysql> SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b;
 利用javacsv库将csv文本文件内容加载到内存中：
 
 ```
-URL resource = ExampleTest.class.getClassLoader().getResource("t_foo.CSV");
-List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
+URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
+DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
 ```
 
-说明：CSV文本文件在内存中的存储格式为: 单行记录用HashMap<String,String>存储，多行记录用户ArrayList<Map>存储。
+说明：CSV文本文件在内存中的存储格式为: 单行记录用String[]存储，多行记录用户ArrayList<String[]>存储。
 
 - (2) 字段排序
 
 利用jdk里的Collections.sort()里的TimSort排序算法：
 
 ```
-		Collections.sort(data, new Comparator<Map<String, String>>() {
+		Collections.sort(dataRecordSet.getContent(), new Comparator<String[]>() {
 
 			@Override
-			public int compare(Map<String, String> left, Map<String, String> rigth) {
+			public int compare(String[] left, String[] rigth) {
 				for (Map.Entry<String, StringToNumberConverter<?>> entry : groupByFieldsMap.entrySet()) {
-					String lv = left.get(entry.getKey());
-					String rv = rigth.get(entry.getKey());
+					String field = entry.getKey();
 					StringToNumberConverter<?> converter = entry.getValue();
-
-					Number o1 = converter.convert(lv);
-					Number o2 = converter.convert(rv);
 					
-					if (o1 instanceof Comparable && o2 instanceof Comparable) {
-						@SuppressWarnings("rawtypes")
-						Comparable c1 = (Comparable) o1;
-						@SuppressWarnings("rawtypes")
-						Comparable c2 = (Comparable) o2;
-						@SuppressWarnings("unchecked")
-						int ret = c1.compareTo(c2);
-						if (0 != ret) {
-							return ret;
-						}
-					} else {
-						int ret = myCompareTo(SerializationUtils.serialize(o1), SerializationUtils.serialize(o1));
-						if (0 != ret) {
-							return ret;
-						}
+					int index = dataRecordSet.getFieldIndex(field);
+					
+					Number o1 = converter.convert(left[index]);
+					Number o2 = converter.convert(rigth[index]);
+
+					// Here o1 and o2 is all implement Comparable
+					@SuppressWarnings("rawtypes")
+					Comparable c1 = (Comparable) o1;
+					@SuppressWarnings("rawtypes")
+					Comparable c2 = (Comparable) o2;
+
+					@SuppressWarnings("unchecked")
+					int ret = c1.compareTo(c2);
+					if (0 != ret) {
+						return ret;
 					}
 				}
 
@@ -408,8 +404,7 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 		/* 获取group的所有字段 */
 		Set<String> groupFields = groupByFieldsMap.keySet();
 		/* 获取非group的所有字段 */
-		Set<String> otherFields = queryFieldsMap.keySet().stream().filter((i) -> !groupFields.contains(i))
-				.collect(Collectors.toSet());
+		Set<String> otherFields = queryFieldsMap.keySet().stream().filter((i) -> !groupFields.contains(i)).collect(Collectors.toSet());
 
 		/* 记录聚合计算的起止数据游标 */
 		int first = 0, last = 0;
@@ -426,14 +421,14 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 		 * </p>
 		 */
 		int i;
-		for (i = 0; i < this.data.size(); ++i) {
-			Map<String, String> originRow = this.data.get(i);
+		for (i = 0; i < dataRecordSet.getContent().size(); ++i) {
+			String[] originRow = dataRecordSet.getContent().get(i);
 
 			if (result.isEmpty()) {
 				// 当首次结果集为空时，先将分组字段数据存储，整行记录不完整
 				Map<String, String> targetRow = new HashMap<>();
 				for (String gf : groupFields) {
-					targetRow.put(gf, originRow.get(gf));
+					targetRow.put(gf, originRow[dataRecordSet.getFieldIndex(gf)]);
 				}
 
 				result.add(targetRow);
@@ -451,14 +446,14 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 					// 调用聚合函数进行计算,聚合函数由用户从外部传入
 					for (String of : otherFields) {
 						Aggregation<?, ?> aggregation = queryFieldsMap.get(of);
-						List<Map<String, String>> subData = this.data.subList(first, last + 1);
-						Number v = aggregation.aggregation(Collections.unmodifiableList(subData));
+						List<String[]> subData = dataRecordSet.getSubContent(first, last + 1);
+						Number v = aggregation.aggregation(dataRecordSet.getHeader(), subData);
 						targetRow.put(aggregation.getAggregationFunctionName() + "_" + of, v.toString());
 					}
 
 					targetRow = new HashMap<>();
 					for (String f : groupFields) {
-						targetRow.put(f, originRow.get(f));
+						targetRow.put(f, originRow[dataRecordSet.getFieldIndex(f)]);
 					}
 
 					result.add(targetRow);
@@ -478,8 +473,8 @@ List<Map<String, String>> data=CsvFileUtils.readCsvFile(resource.getFile());
 		// 调用聚合函数进行计算
 		for (String of : otherFields) {
 			Aggregation<?, ?> aggregation = queryFieldsMap.get(of);
-			List<Map<String, String>> subData = this.data.subList(first, last + 1);
-			Number v = aggregation.aggregation(Collections.unmodifiableList(subData));
+			List<String[]> subData = dataRecordSet.getSubContent(first, last + 1);
+			Number v = aggregation.aggregation(dataRecordSet.getHeader(), subData);
 			targetRow.put(aggregation.getAggregationFunctionName() + "_" + of, v.toString());
 		}
 
@@ -576,12 +571,12 @@ MySQL的csv存储引擎支持csv格式的文本方式存储数据，并可通过
 
 | 数据量 | myself |  calcite  |  MySQL  |
 | :--- |  :---: |  :---: |  :---: |
-| 100w | 2.750 |  0.323  |  1.155  |
-| 500w | 13.840 |  1.209  |  4.428  |
-| 600w | OOM |  1.299   |  4.618  |
-| 700w | OOM |  1.487   |  5.692  |
-| 800w | OOM  |  1.679  |  6.014  |
-| 1000w | OOM |  2.726  |  7.042  |
+| 100w | 0.515 |  0.323  |  1.155  |
+| 500w | 3.375 |  1.209  |  4.428  |
+| 600w | 5.262 |  1.299   |  4.618  |
+| 700w | 7.427 |  1.487   |  5.692  |
+| 800w | 7.188  |  1.679  |  6.014  |
+| 1000w | 23.390 |  2.726  |  7.042  |
 | 2000w | OOM |  4.510  |  13.639  |
 
 注：
@@ -602,11 +597,11 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 	at java.lang.String.<init>(Unknown Source)
 	at com.csvreader.CsvReader.endColumn(Unknown Source)
 	at com.csvreader.CsvReader.readRecord(Unknown Source)
-	at com.github.tang.groupby.util.CsvFileUtils.readCsvFile(CsvFileUtils.java:39)
-	at com.github.tang.groupby.PerformanceTest.testGroupByServiceWithFooAvg800w(PerformanceTest.java:74)
+	at com.github.tang.groupby.util.CsvFileUtils.readCsvFile(CsvFileUtils.java:44)
+	at com.github.tang.groupby.PerformanceTest.testGroupByServiceWithFooAvg2000w(PerformanceTest.java:139)
 ```
 
-可知，由于csv文本加载到内存后存储的数据结构为ArrayList<HashMap<String, String>>（为了简单快速，首版就先用了HashMap）,而HashMap存储了数组与红黑树结构的额外内存开销，而在myself算法中并未使用HashMap的复杂特性，每行的字段数据比较少，所以此数据结构可以重新自定义。
+可知，由于csv文本加载到内存后存储的数据结构为ArrayList<String[]>。
 
 - (2) 速度问题分析： 从执行速度上来看，calcite > MySQL > myself
 
@@ -628,4 +623,4 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 经过此次探究，较为深入的了解了group by底层的大致原理，并基本算是实现了一个简单版的avg(),min(),max(),sum(),count()等聚合函数的group by功能实现。但目前支持含有一个整形字段的group by，对于多字段和其他数据类型的支持含有很大差距。
 
-从测试结果来看，目前最大只能支持到五百万，而支持千万级的数据量目标尚未实现，后续还需要继续努力!!!
+从测试结果来看，目前最大只能支持到1千万，而支持两千万级的数据量目标尚未实现，后续还需要继续努力!!!

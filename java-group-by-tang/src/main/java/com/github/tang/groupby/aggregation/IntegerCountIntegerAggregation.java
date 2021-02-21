@@ -17,7 +17,7 @@ public class IntegerCountIntegerAggregation extends AbstractAggregation<Integer,
 	}
 
 	@Override
-	public Integer aggregation(List<Map<String, String>> data) {
+	public Integer aggregation(Map<String, Integer> header, List<String[]> data) {
 		return data.size();
 	}
 
