@@ -569,6 +569,8 @@ MySQL的csv存储引擎支持csv格式的文本方式存储数据，并可通过
 
 本文的算法(下文简称myself)与calcite和mysql进行了性能对比测试，分别以100w、500w、800w、1000w、2000w的数据量进行对比测试，结果如下：
 
+#### （1）工作机测试
+
 | 数据量 | myself |  calcite  |  MySQL  |
 | :--- |  :---: |  :---: |  :---: |
 | 100w | 0.515 |  0.323  |  1.155  |
@@ -581,11 +583,13 @@ MySQL的csv存储引擎支持csv格式的文本方式存储数据，并可通过
 
 注：
 
-- (1) 测试环境：自己的工作机器，Mem: 8G , CPU : 4核(Intel i3)；
+- (1) 测试环境：自己的工作机器，OS: Win10 Home, Mem: 8G , CPU : 1个CPU/4核(Intel i3)；
 
-- (2) 性能时间单位为秒；
+- (2) JVM参数默认配置；
 
-- (3) OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段，堆栈信息如下：
+- (3) 性能时间单位为秒；
+
+- (4) OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段，堆栈信息如下：
 
 ```
 java.lang.OutOfMemoryError: GC overhead limit exceeded
@@ -596,6 +600,28 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 	at com.github.tang.groupby.util.CsvFileUtils.readCsvFile(CsvFileUtils.java:44)
 	at com.github.tang.groupby.PerformanceTest.testGroupByServiceWithFooAvg2000w(PerformanceTest.java:139)
 ```
+
+#### （2）服务器测试
+
+| 数据量 | myself |  calcite  |  MySQL  |
+| :--- |  :---: |  :---: |  :---: |
+| 100w | 0.933 |  0.411  |  1.155  |
+| 500w | 6.929 |  1.802  |  4.428  |
+| 600w | 7.295 |  2.131   |  4.618  |
+| 700w | 7.458 |  2.487   |  5.692  |
+| 800w | 7.852  |  2.819  |  6.014  |
+| 1000w | 23.657 |  3.755  |  7.042  |
+| 2000w | 43.677 |  6.745  |  13.639  |
+
+注：
+
+- (1) 测试环境：CentOS服务器，OS: CentOS Linux release 7.5.1804 (Core), Mem: 19G , CPU : 8个CPU/8核(Intel(R) Xeon(R) Silver 4208 CPU @ 2.10GHz)；
+
+- (2) JVM参数默认配置；
+
+- (3) 性能时间单位为秒；
+
+- (4) 未发生OOM；
 
 ### 3、性能问题分析
 
@@ -619,4 +645,4 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 经过此次探究，较为深入的了解了group by底层的大致原理，并基本算是实现了一个简单版的avg(),min(),max(),sum(),count()等聚合函数的group by功能实现。但目前支持含有一个整形字段的group by，对于多字段和其他数据类型的支持含有很大差距。
 
-从测试结果来看，目前**最大只能支持到1千万三百万左右的数据量**，而支持两千万级的数据量目标尚未实现，后续还需要继续努力!!!
+从测试结果来看，目前**能支千万级别左右的数据量(依赖物理内存)**，而支持上亿级的数据量目标还需要继续努力!!!
