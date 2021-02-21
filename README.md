@@ -5,11 +5,11 @@
 
 ### 1、研究背景
 
-在关系数据库中，通常可以使用group by语句进行分组聚合计算，探究其实现原理，基于csv文件作为数据的输入，采用java语言编写实现一个简易的group by算法。
+在关系数据库中，通常可以使用group by语句进行分组聚合计算，探究其实现原理，基于csv文件作为数据的输入，采用java语言编写实现一个简易的group by算法,并支持千万级数据的计算。
 
 ### 2、问题描述
 
-程序从CSV 格式的文件中读取数据(例如foo.CSV)，每行包含英文逗号分隔的两个整数，其中含有千万行模拟数据，可以看做个 foo(a int, b int) 的数据库关系表，样例如下: 
+程序从CSV 格式的文件中读取数据(例如foo.csv)，每行包含英文逗号分隔的两个整数，其中含有千万行模拟数据，可以看做个 foo(a int, b int) 的数据库关系表，样例如下: 
 
 ```
 a,b
@@ -347,7 +347,7 @@ mysql> SELECT avg(a) as `avg_a`,b FROM `foo` GROUP BY b;
 
 - (1) 加载数据到内存
 
-利用javacsv库将csv文本文件内容加载到内存中：
+利用javacsv库将csv文本文件内容全部加载到内存中：
 
 ```
 URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
@@ -585,11 +585,7 @@ MySQL的csv存储引擎支持csv格式的文本方式存储数据，并可通过
 
 - (2) 性能时间单位为秒；
 
-- (3) OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段；
-
-### 3、性能问题分析
-
-- (1) OOM问题分析：myself的数据在加载至内存的过程中就发生了OOM，堆栈信息如下：
+- (3) OOM的类型为：java.lang.OutOfMemoryError: GC overhead limit exceeded，发生在csv加载到内存的阶段，堆栈信息如下：
 
 ```
 java.lang.OutOfMemoryError: GC overhead limit exceeded
@@ -601,15 +597,15 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 	at com.github.tang.groupby.PerformanceTest.testGroupByServiceWithFooAvg2000w(PerformanceTest.java:139)
 ```
 
-可知，由于csv文本加载到内存后存储的数据结构为ArrayList<String[]>。
+### 3、性能问题分析
+
+- (1) OOM问题分析：myself的数据在加载至内存的过程中就发生了OOM
 
 - (2) 速度问题分析： 从执行速度上来看，calcite > MySQL > myself
 
 目前尚未细读过calcite与mysql的group by的实现代码，算法复杂度的比较分析暂时无法给出。
 
 - (3) 改进优化点尝试
-
-> 改进csv文本加载到内存后存储的数据结构；
 
 > 支持group by多个字段的情况；
 
@@ -623,4 +619,4 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 经过此次探究，较为深入的了解了group by底层的大致原理，并基本算是实现了一个简单版的avg(),min(),max(),sum(),count()等聚合函数的group by功能实现。但目前支持含有一个整形字段的group by，对于多字段和其他数据类型的支持含有很大差距。
 
-从测试结果来看，目前最大只能支持到1千万，而支持两千万级的数据量目标尚未实现，后续还需要继续努力!!!
+从测试结果来看，目前**最大只能支持到1千万三百万左右的数据量**，而支持两千万级的数据量目标尚未实现，后续还需要继续努力!!!

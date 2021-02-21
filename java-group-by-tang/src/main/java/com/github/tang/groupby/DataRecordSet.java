@@ -62,17 +62,20 @@ public class DataRecordSet {
 		StringBuilder sb = new StringBuilder();
 		for (Object[] row : this.content) {
 			int i=0;
+			sb.append("{");
 			for (Map.Entry<String, Integer> entry : this.header.entrySet()) {
-				sb.append("{");
+				if (i > 0) {
+					sb.append(", ");
+				}
+				
 				String field = entry.getKey();
 				Object value = row[entry.getValue()];
-				sb.append(String.format(" %s = %s ", i == 0 ? "," : "", field, value));
-				sb.append("}");
+				sb.append(String.format("%s = %s", field, value));
 
 				i++;
 			}
 
-			sb.append("\n");
+			sb.append("}\n");
 		}
 
 		return sb.toString();

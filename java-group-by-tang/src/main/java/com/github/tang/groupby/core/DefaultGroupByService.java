@@ -39,7 +39,7 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 		// 字段排序
 		this.orderUseGroupByFields(aggregations);
 
-		// System.out.println(this.data);
+		// System.out.println(dataRecordSet);
 
 		// 归并聚合
 		return this.aggregateData(aggregations);

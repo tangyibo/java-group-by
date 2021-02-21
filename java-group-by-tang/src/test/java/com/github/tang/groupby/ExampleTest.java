@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.junit.Test;
 import com.github.tang.groupby.aggregation.DoubleAvgIntegerAggregation;
 import com.github.tang.groupby.aggregation.IntegerCountIntegerAggregation;
@@ -23,6 +25,7 @@ import com.github.tang.groupby.util.CsvFileUtils;
  * @author tang
  *
  */
+@FixMethodOrder(MethodSorters.DEFAULT)
 public class ExampleTest {
 
 	@Before
@@ -37,14 +40,15 @@ public class ExampleTest {
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
 		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
-
+		System.out.println("Origin table:\n" + data);
+		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT avg(a) as `avg_a`,b FROM `test` GROUP BY b; */
 		List<Map<String, String>> r = service.groupBy(new DoubleAvgIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Avg() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Avg() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -54,14 +58,15 @@ public class ExampleTest {
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
 		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
-
+		System.out.println("Origin table:\n" + data);
+		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT min(a) as `avg_a`,b FROM `test` GROUP BY b; */
 		List<Map<String, String>> r = service.groupBy(new IntegerMinIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Min() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Min() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -71,14 +76,15 @@ public class ExampleTest {
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
 		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
-
+		System.out.println("Origin table:\n" + data);
+		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT max(a) as `avg_a`,b FROM `test` GROUP BY b; */
 		List<Map<String, String>> r = service.groupBy(new IntegerMaxIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Max() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Max() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -88,14 +94,15 @@ public class ExampleTest {
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
 		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
-
+		System.out.println("Origin table:\n" + data);
+		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT sum(a) as `avg_a`,b FROM `test` GROUP BY b; */
 		List<Map<String, String>> r = service.groupBy(new IntegerSumIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute sum() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute sum() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -105,14 +112,15 @@ public class ExampleTest {
 		watch.start();
 		URL resource = ExampleTest.class.getClassLoader().getResource("test.csv");
 		DataRecordSet data=CsvFileUtils.readCsvFile(resource.getFile());
-
+		System.out.println("Origin table:\n" + data);
+		
 		GroupByService service = new DefaultGroupByService(data);
 		/* SELECT count(a) as `avg_a`,b FROM `test` GROUP BY b; */
 		List<Map<String, String>> r = service.groupBy(new IntegerCountIntegerAggregation("a",new StringToIntegerConverter()), new IntegerNoAggregation("b",new StringToIntegerConverter()));
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute count() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute count() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 }

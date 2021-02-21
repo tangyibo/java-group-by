@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
-
+import org.junit.runners.MethodSorters;
 import com.github.tang.groupby.aggregation.DoubleAvgIntegerAggregation;
 import com.github.tang.groupby.aggregation.IntegerNoAggregation;
 import com.github.tang.groupby.converter.StringToIntegerConverter;
@@ -16,11 +16,12 @@ import com.github.tang.groupby.core.DefaultGroupByService;
 import com.github.tang.groupby.util.CsvFileUtils;
 
 /**
- * 大数据量性能单元测试类
+ * 大数据量性能测试类
  * 
  * @author tang
  *
  */
+@FixMethodOrder(MethodSorters.DEFAULT)
 public class PerformanceTest {
 
 	@Before
@@ -42,7 +43,7 @@ public class PerformanceTest {
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Big Data 100w Avg() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Big Data 100w Avg() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -59,7 +60,7 @@ public class PerformanceTest {
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Big Data 500w Avg() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Big Data 500w Avg() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -76,7 +77,7 @@ public class PerformanceTest {
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Big Data 600w Avg() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Big Data 600w Avg() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -93,7 +94,7 @@ public class PerformanceTest {
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Big Data 700w Avg() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Big Data 700w Avg() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -110,7 +111,7 @@ public class PerformanceTest {
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Big Data 800w Avg() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Big Data 800w Avg() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -127,7 +128,7 @@ public class PerformanceTest {
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Big Data 1000w Avg() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Big Data 1000w Avg() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 	
 	@Test
@@ -144,6 +145,6 @@ public class PerformanceTest {
 		System.out.println("Result table: ");
 		r.stream().forEach((i)->System.out.println(i));
 		watch.stop();
-		System.out.println("Test Execute Big Data 2000w Avg() Group by Time Elapsed: " + watch.getTime());
+		System.out.println("Test Execute Big Data 2000w Avg() Group by Time Elapsed(ms) : " + watch.getTime());
 	}
 }
