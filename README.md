@@ -1,6 +1,12 @@
 
 # 数据库的group by实现探究
 
+**托管地址**：
+
+- github: https://github.com/tangyibo/java-group-by
+
+- gitee: https://gitee.com/inrgihc/java-group-by
+
 ## 一、探索目标
 
 ### 1、研究背景
@@ -636,6 +642,10 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 > 支持group by多个字段的情况；
 
 > 扩大支持的数据类型的范围；
+
+> 分析calcite加载csv的方式;
+
+> 结果集生成支持流式;
 
 > 甚至:支持写SQL的方式;
 
