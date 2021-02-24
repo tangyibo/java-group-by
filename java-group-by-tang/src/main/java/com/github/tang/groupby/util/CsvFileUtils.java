@@ -1,14 +1,14 @@
 package com.github.tang.groupby.util;
 
-import java.io.FileInputStream;
+//import java.io.FileInputStream;
+//import java.io.InputStreamReader;
+//import java.util.Scanner;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-//import com.csvreader.CsvReader;
+import com.csvreader.CsvReader;
 import com.github.tang.groupby.DataRecordSet;
 
 /**
@@ -30,6 +30,7 @@ public final class CsvFileUtils {
 	 * @throws IOException
 	 */
 	public static DataRecordSet readCsvFile(String filePath, String... columns) throws IOException {
+		/*
 		InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(filePath));
 		Scanner inputStream = new Scanner(inputStreamReader);
 
@@ -56,7 +57,7 @@ public final class CsvFileUtils {
 			header.put(columns[i], i);
 		}
         
-        /*
+        */
 		CsvReader csvReader = new CsvReader(filePath);
 		if (csvReader.readHeaders()) {
 			if (0 == columns.length) {
@@ -83,7 +84,7 @@ public final class CsvFileUtils {
 			System.err.println("OOM happened when load data count=" + content.size());
 			throw e;
 		}
-		*/
+		
 		return new DataRecordSet(header, content);
 	}
 
