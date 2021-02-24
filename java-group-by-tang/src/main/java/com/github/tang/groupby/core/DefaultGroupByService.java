@@ -133,7 +133,7 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 
 			if (result.isEmpty()) {
 				// 当首次结果集为空时，先将分组字段数据存储，整行记录不完整
-				Map<String, String> targetRow = new HashMap<>();
+				Map<String, String> targetRow = new MinimumMemoryMap<>();
 				for (String gf : groupFields) {
 					targetRow.put(gf, originRow[dataRecordSet.getFieldIndex(gf)]);
 				}
@@ -158,7 +158,7 @@ public class DefaultGroupByService extends AbstractGroupByService implements Gro
 						targetRow.put(aggregation.getAggregationFunctionName() + "_" + of, v.toString());
 					}
 
-					targetRow = new HashMap<>();
+					targetRow = new MinimumMemoryMap<>();
 					for (String f : groupFields) {
 						targetRow.put(f, originRow[dataRecordSet.getFieldIndex(f)]);
 					}
