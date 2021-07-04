@@ -1,12 +1,6 @@
 
 # 数据库的group by实现探究
 
-**托管地址**：
-
-- github: https://github.com/tangyibo/java-group-by
-
-- gitee: https://gitee.com/inrgihc/java-group-by
-
 ## 一、探索目标
 
 ### 1、研究背景
